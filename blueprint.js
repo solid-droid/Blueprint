@@ -10,6 +10,15 @@ export class Blueprint{
         this.containerDOM = $(container);
         this.containerDOM.addClass('blueprint_container')
         this.viewerDOM = $('<div class="blueprint_viewer"></div>');
+        this.backgroundDOM = $(`
+        <svg class="blueprint_background">
+            <pattern id="dotBackground" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="translate(-0.4,-0.4)">
+                <circle cx="0.7" cy="0.7" r="0.7" fill="#91919a"></circle>
+            </pattern>
+            <rect x="0" y="0" width="100%" height="100%" fill="url(#dotBackground)"></rect>
+        </svg>
+        `);
+        this.containerDOM.append(this.backgroundDOM);
         this.containerDOM.append(this.viewerDOM);
         this.createViewer();
         this.createDragableNode();
@@ -20,16 +29,23 @@ export class Blueprint{
         this.viewer =  panzoom(this.viewerDOM[0],{
             maxZoom: 2,
             minZoom: 0.5,
-            beforeMouseDown: function(e) {
-                // allow mouse-down panning only if altKey is down. Otherwise - ignore
-                var shouldIgnore = e.ctrlKey;
-                return shouldIgnore;
-              }
-        });
-        this.viewer.on("pan", e => {
+            smoothScroll: false,
+            beforeMouseDown: e => {
+                const elementClick = $('.blueprint_nodeContainer:hover').length !==0;
+                const ctrlKey = e.ctrlKey;
+                if(elementClick && !ctrlKey){
+                    this.moveable.target = $('.blueprint_nodeContainer:hover')[0];
+                    this.moveable.dragStart(e);
+                }
+                if(elementClick || ctrlKey){
+                    return true;
+                } 
+            }
+        }).on("pan", e => {
             const transform = e.getTransform();
+            this.backgroundDOM.find('pattern').attr({x:transform.x, y:transform.y})
         }).on("zoom", e => {
-            const transform = e.getTransform();
+            // const transform = e.getTransform();
         })
     }
 
@@ -56,7 +72,11 @@ export class Blueprint{
             })
             .on("drag", helper.onDrag)
             .on("dragEnd", e => this.viewer.resume())
-            .on("dragGroupStart", helper.onDragGroupStart)
+            .on("dragGroupStart", (...params) => {
+                this.viewer.pause();
+                helper.onDragGroupStart(...params)
+            })
+            .on("dragGroupEnd", e => this.viewer.resume())
             .on("dragGroup", helper.onDragGroup)
             .on("scaleStart", helper.onScaleStart)
             .on("scale", helper.onScale)
