@@ -23,6 +23,7 @@
     position: absolute;
     padding: 5px;
     border: solid 1px black;
+    background-color: rgb(238, 238, 238);
     .blueprint_header{
         color: red;
         display: flex;
