@@ -1,0 +1,50 @@
+.blueprint_container{
+    position: relative;
+    overflow: hidden;
+    outline: none;
+    .moveable-line{
+        height: 3px!important;
+    }
+    .blueprint_viewer{
+        position: absolute;
+        width: 100000px;
+        height: 100000px;
+    }
+}
+.blueprint_nodeContainer{
+    user-select: none; 
+    position: absolute;
+    padding: 5px;
+    border: solid 1px black;
+    .blueprint_header{
+        color: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: solid 1px black;
+    }
+    .blueprint_body{
+        display: flex;
+        grid-gap: 10px;
+        min-width: 100px;
+        min-height: 50px;
+        justify-content: center;
+        align-items: center;
+        .blueprint_input{
+            
+        }
+        .blueprint_content{
+
+        }
+        .blueprint_output{
+
+        }
+    }
+    .blueprint_footer{
+        border-top:1px solid black;
+        color: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

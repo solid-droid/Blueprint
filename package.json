@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "arrow-line": "^0.7.5",
+    "jquery": "^3.7.1",
+    "moveable": "^0.52.0",
+    "moveable-helper": "^0.4.0",
+    "panzoom": "^9.4.3",
+    "selecto": "^1.26.1"
+  }
+}
