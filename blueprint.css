@@ -19,6 +19,7 @@
     }
 }
 .blueprint_nodeContainer{
+    z-index: 1;
     user-select: none; 
     position: absolute;
     padding: 5px;

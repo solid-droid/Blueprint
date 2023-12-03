@@ -52,8 +52,6 @@ export class Blueprint{
     createDragableNode(){
         const self = this;
         let targets = [];
-
-        
         this.moveable = new Moveable(this.viewerDOM[0], {
           target: [],
           draggable: true,
@@ -66,15 +64,19 @@ export class Blueprint{
 
         const helper = MoveableHelper.create();
         this.moveable
-            .on("dragStart", (...params) => {
-                this.viewer.pause()
-                helper.onDragStart(...params);
+            .on("dragStart", e => {
+                this.viewer.pause();
+                $('.blueprint_nodeContainer').css({'z-index':1});
+                $(e.target).css({'z-index':2});
+                helper.onDragStart(e);
             })
             .on("drag", helper.onDrag)
-            .on("dragEnd", e => this.viewer.resume())
-            .on("dragGroupStart", (...params) => {
+            .on("dragEnd", e => {
+                this.viewer.resume();
+            })
+            .on("dragGroupStart", e => {
                 this.viewer.pause();
-                helper.onDragGroupStart(...params)
+                helper.onDragGroupStart(e)
             })
             .on("dragGroupEnd", e => this.viewer.resume())
             .on("dragGroup", helper.onDragGroup)
@@ -87,8 +89,7 @@ export class Blueprint{
             .on("rotateGroupStart", helper.onRotateGroupStart)
             .on("rotateGroup", helper.onRotateGroup)
 
-
-            const selecto = new Selecto({
+            new Selecto({
                 container: this.containerDOM[0],
                 dragContainer: this.containerDOM[0],
                 hitRate: 0,
