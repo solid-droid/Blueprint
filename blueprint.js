@@ -43,9 +43,18 @@ export class Blueprint{
             }
         }).on("pan", e => {
             const transform = e.getTransform();
-            this.backgroundDOM.find('pattern').attr({x:transform.x, y:transform.y})
+            this.backgroundDOM.find('pattern').attr({
+                x:transform.x/transform.scale, 
+                y:transform.y/transform.scale,
+                patternTransform:`scale(${transform.scale})`
+            });
         }).on("zoom", e => {
-            // const transform = e.getTransform();
+            const transform = e.getTransform();
+            this.backgroundDOM.find('pattern').attr({
+                x:transform.x/transform.scale, 
+                y:transform.y/transform.scale,
+                patternTransform:`scale(${transform.scale})`
+            });
         })
     }
 
