@@ -2,22 +2,24 @@ import {Blueprint} from "./blueprint.js";
 const graph = new Blueprint('#blueprint');
 graph.addNode(0,{
     inputs:[
-        {title:'number 1'},
-        {title:'number 2'}
+        {label:'a'},
+        {label:'b'},
+        {label:'c'},
+        {label:'d'}
     ],
     outputs:[
-        {title:'sum'},
+        {label:'sum'},
     ],
     content: `<div>hello world</div>`,
     header: `Sum of 2 numbers`,
 });
 graph.addNode(1,{
     inputs:[
-        {title:'number 1'},
-        {title:'number 2'}
+        {label:'number 1'},
+        {label:'number 2'}
     ],
     outputs:[
-        {title:'sum'},
+        {label:'sum'},
     ],
     content: `<div>hello world</div>`,
     header: `Sum of 2 numbers`,
