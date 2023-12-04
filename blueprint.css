@@ -18,7 +18,10 @@
     }
     .moveable-line{
         /* height: 3px!important; */
-        /* opacity: 0; */
+       
+    }
+    .moveable-control-box{
+        z-index: 1!important;
     }
     .blueprint_viewer{
         position: absolute;
