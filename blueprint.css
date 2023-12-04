@@ -18,7 +18,7 @@
     }
     .moveable-line{
         /* height: 3px!important; */
-        opacity: 0;
+        /* opacity: 0; */
     }
     .blueprint_viewer{
         position: absolute;
@@ -45,12 +45,22 @@
         grid-gap: 10px;
         min-width: 100px;
         min-height: 50px;
-        .blueprint_input{
-            margin-left: -12px;
+        .blueprint_inputPort{
+            position: absolute;
+            margin-left: -13px;
+            display: flex;
+            width: 30px;
+            justify-content: left;
+        }
+        .blueprint_inputPortLabel{
+            padding-left: 5px;
         }
         .blueprint_outputPort{
             position: absolute;
-            margin-left: 30px;
+            margin-left: 13px;
+            display: flex;
+            width: 30px;
+            justify-content: right;
         }
         .blueprint_outputPortLabel{
             padding-right: 5px;

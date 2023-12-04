@@ -121,11 +121,31 @@ export class Blueprint{
 
         const offsetX = cx+lx;
         const offsetY = cy+ly;
-        const fromX = fx/z+12-offsetX/z+containerOffset;
+        const fromX = fx/z+29-offsetX/z+containerOffset;
         const fromY = fy/z+13-offsetY/z+containerOffset;
         const toX = tx/z+7-offsetX/z+containerOffset;
         const toY = ty/z+13-offsetY/z+containerOffset;
         return {fromX, fromY, toX, toY}
+    }
+
+    updateArrows(nodeIds=[]){
+        if(!this.dragArrows && nodeIds){
+            this.dragArrows = [];
+            Object.values(this.arrowList).forEach(item => {
+                const fromNodeID = item.startPort.split('_')[1];
+                const toNodeID = item.endPort.split('_')[1];
+                if(nodeIds.includes(fromNodeID) || nodeIds.includes(toNodeID)){
+                    this.dragArrows.push(item);
+                }
+            });
+        }
+        this.dragArrows?.forEach(item => {
+            const {fromX, fromY, toX, toY} = this.getArrowCoords(item.startPortQuerry, item.endPortQuerry);
+            item.arrow.update({
+                source: {x: fromX, y: fromY} ,
+                destination: {x: toX, y: toY}
+            })
+        });
     }
 
     createDragableNode(){
@@ -156,24 +176,7 @@ export class Blueprint{
             })
             .on("drag", e => {
                 const nodeId = e.target.dataset["nodeRef"]?.split('node_')[1];
-                if(!this.dragArrows && nodeId!==undefined){
-                    this.dragArrows = [];
-                    Object.values(this.arrowList).forEach(item => {
-                        const fromNodeID = item.startPort.split('_')[1];
-                        const toNodeID = item.endPort.split('_')[1];
-                        if(fromNodeID == nodeId || toNodeID == nodeId){
-                            this.dragArrows.push(item);
-                        }
-                    });
-                }
-                this.dragArrows?.forEach(item => {
-                    const {fromX, fromY, toX, toY} = this.getArrowCoords(item.startPortQuerry, item.endPortQuerry);
-                    item.arrow.update({
-                        source: {x: fromX, y: fromY} ,
-                        destination: {x: toX, y: toY}
-                    })
-                });
-                
+                this.updateArrows([nodeId]);
                 helper.onDrag(e);
             })
             .on("dragEnd", e => {
@@ -184,8 +187,14 @@ export class Blueprint{
                 this.viewer.pause();
                 helper.onDragGroupStart(e)
             })
-            .on("dragGroupEnd", e => this.viewer.resume())
-            .on("dragGroup", helper.onDragGroup)
+            .on("dragGroupEnd", e => {
+                this.dragArrows = null;
+                this.viewer.resume()
+            })
+            .on("dragGroup", e => {
+                this.updateArrows([...e.targets].map(x => x.dataset["nodeRef"]?.split('node_')[1]));
+                helper.onDragGroup(e);
+            })
             .on("scaleStart", helper.onScaleStart)
             .on("scale", helper.onScale)
             .on("scaleGroupStart", helper.onScaleGroupStart)
@@ -219,8 +228,7 @@ export class Blueprint{
                 ) {
                   e.stop();
                 }
-              })
-              .on("selectEnd", (e) => {
+              }).on("selectEnd", (e) => {
                 targets = e.selected;
                 self.moveable.target = targets;
               
@@ -254,7 +262,7 @@ export class Blueprint{
         options.inputs?.forEach((input,i) => {
             const inputPort = $(`<div data-port-ref="input_${id}_${i}" class="blueprint_inputPort blueprint_portHandle"><i class="fa-solid fa-caret-right"></i></div>`);
             const inputText = $(`<div class="blueprint_inputPortLabel">${input.label}</div>`);
-            const port = $(`<div class="blueprint_inputPortContainer"></div>`);
+            const port = $(`<div class="blueprint_inputPortContainer blueprint_portContainer"></div>`);
             port.append(inputPort);
             port.append(inputText);
             nodeInputs.append(port);
@@ -265,7 +273,7 @@ export class Blueprint{
         options.outputs?.forEach((input,i) => {
             const outputPort = $(`<div  data-port-ref="output_${id}_${i}" class="blueprint_outputPort blueprint_portHandle"><i class="fa-solid fa-caret-right"></i></div>`);
             const outputText = $(`<div class="blueprint_outputPortLabel">${input.label}</div>`);
-            const port = $(`<div class="blueprint_outputPortContainer"></div>`);
+            const port = $(`<div class="blueprint_outputPortContainer blueprint_portContainer"></div>`);
             port.append(outputText);
             port.append(outputPort);
             nodeOutputs.append(port);
