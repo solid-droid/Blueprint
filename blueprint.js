@@ -252,9 +252,8 @@ export class Blueprint{
     addHTML(html){
         this.containerDOM.append(html);
     }
+    NodeWithBody(id, options){
 
-    addNode(id, options={}){
-        const self = this;
         const nodeElem = $(`<div data-node-ref="node_${id}" class="blueprint_nodeContainer"></div>`);
         const nodeHeader = $(`<div class="blueprint_header">${options.header}</div>`);
         const nodeBody = $(`<div class="blueprint_body"></div>`);
@@ -286,11 +285,23 @@ export class Blueprint{
         nodeBody.append(nodeInputs);
         nodeBody.append(nodeContent);
         nodeBody.append(nodeOutputs);
-        nodeElem.append(nodeFooter);
 
+        if(options.footer !== undefined)
+            nodeElem.append(nodeFooter);
+
+        return nodeElem;
+
+    }
+    addNode(id, options={}){
+        options.mode ??= 0;
+        let nodeElem
+        if(options.mode === 0){
+            nodeElem = this.NodeWithBody(id , options);
+        }
+        
         this.viewerDOM.append(nodeElem);
         nodeElem.on('click', e =>{
-            self.moveable.target = nodeElem[0];
+            this.moveable.target = nodeElem[0];
         });
         this.nodeList[id] = {DOM:nodeElem};
         return nodeElem;
