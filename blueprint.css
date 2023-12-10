@@ -18,6 +18,7 @@
     }
     .moveable-line{
         /* height: 3px!important; */
+        box-shadow: #b7d3e8 0 0 10px 1px;
        
     }
     .moveable-control-box{
