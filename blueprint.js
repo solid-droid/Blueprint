@@ -102,8 +102,8 @@ export class Blueprint{
                 const screenOffset = 10000;
                 const t = this.viewer.getTransform();
                 const container = this.containerDOM.position();
-                const toX = (e.clientX/t.scale - t.x/t.scale + screenOffset - container.left);
-                const toY = (e.clientY/t.scale - t.y/t.scale + screenOffset - container.top);
+                const toX = (e.clientX - t.x - container.left)/t.scale + screenOffset;
+                const toY = (e.clientY - t.y - container.top )/t.scale + screenOffset;
                 this.ghostArrow.update({source:{x: fromX, y: fromY},destination:{x: toX, y: toY}});
             }
         });
