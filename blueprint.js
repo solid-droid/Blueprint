@@ -22,13 +22,27 @@ export class Blueprint{
             <rect x="0" y="0" width="100%" height="100%" fill="url(#dotBackground)"></rect>
         </svg>
         `);
-        this.arrowDOM = $('<svg class="blueprint_arrows"></svg>');
+        this.arrowDOM = $(`<svg class="blueprint_arrows"></svg>`);
         this.containerDOM.append(this.backgroundDOM);
         this.containerDOM.append(this.viewerDOM);
         this.viewerDOM.append(this.arrowDOM);
         this.createViewer();
         this.createDragableNode();
         this.createArrowMaker();
+        this.createGhostArrow();
+    }
+
+    createGhostArrow(){
+        this.ghostArrow = arrowLine({x: 0, y: 0}, {x: 0, y: 0}, {
+            svgParentSelector:'.blueprint_arrows',
+            thickness: 2,
+            pivots:[{x:20, y: 0}, {x:-30, y: 0}],
+            endpoint:{
+                type : 'none'
+            }
+        });
+        this.ghostArrowDOM = $(this.ghostArrow.getRawSvgPath());
+        this.ghostArrowDOM.hide();
     }
 
     async createViewer(){
@@ -68,13 +82,35 @@ export class Blueprint{
 
     createArrowMaker(){
         let startPort = null;
-        this.containerDOM.on("mousedown",e =>{
+        this.containerDOM.on("mousedown",async e =>{
             const ports = $('.blueprint_portHandle:hover');
             if(ports.length){
                 startPort = ports[0];
+                const startPortQuerry = `[data-port-ref="${startPort.dataset.portRef}"]`;
+                const {fromX,fromY} = this.getArrowCoords(startPortQuerry,startPortQuerry);
+                this.ghostStart = {fromX, fromY};
+                this.arrowDrag = true;
+                await new Promise(r => setTimeout(r, 100));
+                this.ghostArrowDOM.show();
+                
+            }
+        });
+
+        this.containerDOM.on("mousemove",e =>{
+            if(this.arrowDrag){
+                const {fromX,fromY} =this.ghostStart;
+                const screenOffset = 10000;
+                const t = this.viewer.getTransform();
+                const container = this.containerDOM.position();
+                const toX = (e.clientX/t.scale - t.x/t.scale + screenOffset - container.left);
+                const toY = (e.clientY/t.scale - t.y/t.scale + screenOffset - container.top);
+                this.ghostArrow.update({source:{x: fromX, y: fromY},destination:{x: toX, y: toY}});
             }
         });
         this.containerDOM.on("mouseup",e =>{
+            this.arrowDrag = false;
+            this.ghostArrowDOM.hide();
+            this.ghostArrow.update({source:{x: 0, y: 0},destination:{x: 0, y: 0}});
             if(startPort){
                 let endPort = null;
                 const ports = $('.blueprint_portHandle:hover');
