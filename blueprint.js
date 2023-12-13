@@ -117,23 +117,25 @@ export class Blueprint{
                 if(ports.length){
                     //join ports
                     endPort = ports[0];
-                    const startPortQuerry = `[data-port-ref="${startPort.dataset.portRef}"]`;
-                    const endPortQuerry = `[data-port-ref="${endPort.dataset.portRef}"]`
-                    const {fromX,fromY, toX, toY} = this.getArrowCoords(startPortQuerry,endPortQuerry);
-                    const arrow = arrowLine({x: fromX, y: fromY}, {x: toX, y: toY}, {
-                        svgParentSelector:'.blueprint_arrows',
-                        thickness: 2,
-                        pivots:[{x:20, y: 0}, {x:-30, y: 0}],
-                        endpoint:{
-                            type : 'none'
+                    if(!this.arrowList[startPort.dataset.portRef+'___'+endPort.dataset.portRef]){
+                        const startPortQuerry = `[data-port-ref="${startPort.dataset.portRef}"]`;
+                        const endPortQuerry = `[data-port-ref="${endPort.dataset.portRef}"]`
+                        const {fromX,fromY, toX, toY} = this.getArrowCoords(startPortQuerry,endPortQuerry);
+                        const arrow = arrowLine({x: fromX, y: fromY}, {x: toX, y: toY}, {
+                            svgParentSelector:'.blueprint_arrows',
+                            thickness: 2,
+                            pivots:[{x:20, y: 0}, {x:-30, y: 0}],
+                            endpoint:{
+                                type : 'none'
+                            }
+                        });
+                        this.arrowList[startPort.dataset.portRef+'___'+endPort.dataset.portRef] = {
+                            startPortQuerry,
+                            endPortQuerry,
+                            startPort:startPort.dataset.portRef,
+                            endPort: endPort.dataset.portRef,
+                            arrow
                         }
-                    });
-                    this.arrowList[startPort.dataset.portRef+'___'+endPort.dataset.portRef] = {
-                        startPortQuerry,
-                        endPortQuerry,
-                        startPort:startPort.dataset.portRef,
-                        endPort: endPort.dataset.portRef,
-                        arrow
                     }
                 }else{
                     //create new nodeType and join
