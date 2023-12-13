@@ -83,7 +83,7 @@ export class Blueprint{
     createArrowMaker(){
         let startPort = null;
         this.containerDOM.on("mousedown",async e =>{
-            const ports = $('.blueprint_portHandle:hover');
+            const ports = $('.blueprint_outputPort:hover');
             if(ports.length){
                 startPort = ports[0];
                 const startPortQuerry = `[data-port-ref="${startPort.dataset.portRef}"]`;
@@ -113,7 +113,7 @@ export class Blueprint{
             this.ghostArrow.update({source:{x: 0, y: 0},destination:{x: 0, y: 0}});
             if(startPort){
                 let endPort = null;
-                const ports = $('.blueprint_portHandle:hover');
+                const ports = $('.blueprint_inputPort:hover');
                 if(ports.length){
                     //join ports
                     endPort = ports[0];

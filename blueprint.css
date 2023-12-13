@@ -84,10 +84,6 @@
                     transition: 100ms;
                     &:hover{
                         color: #225f79;
-                        cursor: grab;
-                    }
-                    &:active{
-                        cursor: grabbing;
                     }
                 }
                 .blueprint_inputPortLabel, .blueprint_outputPortLabel{
